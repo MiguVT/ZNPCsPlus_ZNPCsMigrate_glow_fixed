@@ -190,13 +190,22 @@ public class ZNpcImporter implements DataImporter {
                     npc.setProperty(propertyRegistry.getByName("skin", SkinDescriptor.class), new MirrorDescriptor(skinCache));
                 }
                 if (toggleValues.containsKey("glow")) {
-                    try {
-                        npc.setProperty(propertyRegistry.getByName("glow", DyeColor.class), DyeColor.valueOf((String) toggleValues.get("glow")));
-                    } catch (IllegalArgumentException e) {
-                        npc.setProperty(propertyRegistry.getByName("glow", DyeColor.class), DyeColor.WHITE);
+                    Object glowValue = toggleValues.get("glow");
+                    if (glowValue instanceof Boolean && (Boolean) glowValue) {
+                        String glowName = model.getGlowName(); // Get glow name from the model
+                        if (glowName != null) {
+                            try {
+                                npc.setProperty(propertyRegistry.getByName("glow", DyeColor.class), DyeColor.valueOf(glowName.toUpperCase()));
+                            } catch (IllegalArgumentException e) {
+                                npc.setProperty(propertyRegistry.getByName("glow", DyeColor.class), DyeColor.WHITE);
+                            }
+                        } else {
+                            npc.setProperty(propertyRegistry.getByName("glow", DyeColor.class), DyeColor.WHITE);
+                        }
                     }
                 }
             }
+
 
             NpcEntryImpl entry = new NpcEntryImpl(String.valueOf(model.getId()), npc);
             entry.enableEverything();
