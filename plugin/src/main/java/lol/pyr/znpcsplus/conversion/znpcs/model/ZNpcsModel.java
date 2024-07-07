@@ -84,4 +84,9 @@ public class ZNpcsModel {
     public String getSignature() {
         return signature;
     }
+
+    public String getGlowName() {
+        return glowName;
+    }
+
 }
