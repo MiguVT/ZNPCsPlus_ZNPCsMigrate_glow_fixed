@@ -9,6 +9,7 @@ import lol.pyr.znpcsplus.skin.descriptor.PrefetchedDescriptor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -21,7 +22,7 @@ public interface BaseSkinDescriptor extends SkinDescriptor {
     static BaseSkinDescriptor deserialize(MojangSkinCache skinCache, String str) {
         String[] arr = str.split(";");
         if (arr[0].equalsIgnoreCase("mirror")) return new MirrorDescriptor(skinCache);
-        else if (arr[0].equalsIgnoreCase("fetching")) return new FetchingDescriptor(skinCache, arr[1]);
+        else if (arr[0].equalsIgnoreCase("fetching")) return new FetchingDescriptor(skinCache, String.join(";", Arrays.copyOfRange(arr, 1, arr.length)));
         else if (arr[0].equalsIgnoreCase("prefetched")) {
             List<TextureProperty> properties = new ArrayList<>();
             for (int i = 0; i < (arr.length - 1) / 3; i++) {
