@@ -39,6 +39,18 @@ public interface Npc extends PropertyHolder {
     void setLocation(NpcLocation location);
 
     /**
+     * Sets the world of this NPC
+     * @param world The bukkit world to set
+     */
+    void setWorld(World world);
+
+    /**
+     * Sets the world of this NPC
+     * @param name The name world to set
+     */
+    void setWorld(String name);
+
+    /**
      * Gets the hologram of this NPC
      * @return The {@link Hologram} of this NPC
      */
@@ -68,6 +80,13 @@ public interface Npc extends PropertyHolder {
      * @return The {@link World} this NPC is in
      */
     World getWorld();
+
+    /**
+     * Gets the name of the world this NPC is in
+     * Unlike {@link Npc#getWorld()} this will never be null
+     * @return The name of the world this NPC is in
+     */
+    String getWorldName();
 
     /**
      * Gets the list of actions for this NPC

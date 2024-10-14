@@ -232,8 +232,15 @@ public class NpcImpl extends Viewable implements Npc {
     }
 
     public void setWorld(World world) {
+        if (world == null) throw new IllegalArgumentException("world can not be null");
         delete();
         this.worldName = world.getName();
+    }
+
+    public void setWorld(String name) {
+        if (name == null) throw new IllegalArgumentException("world name can not be null");
+        delete();
+        this.worldName = name;
     }
 
     public void swingHand(boolean offHand) {

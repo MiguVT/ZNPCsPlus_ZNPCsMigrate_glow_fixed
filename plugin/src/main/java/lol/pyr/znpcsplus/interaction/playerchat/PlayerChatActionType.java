@@ -43,7 +43,7 @@ public class PlayerChatActionType implements InteractionActionType<PlayerChatAct
 
     @Override
     public void appendUsage(CommandContext context) {
-        context.setUsage(context.getUsage() + " " + getSubcommandName() + " <id> <click type> <cooldown seconds> <delay ticks> <server>");
+        context.setUsage(context.getUsage() + " " + getSubcommandName() + " <id> <click type> <cooldown seconds> <delay ticks> <message>");
     }
 
     @Override

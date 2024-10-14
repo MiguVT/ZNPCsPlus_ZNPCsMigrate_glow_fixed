@@ -44,7 +44,7 @@ public class ConsoleCommandActionType implements InteractionActionType<ConsoleCo
 
     @Override
     public void appendUsage(CommandContext context) {
-        context.setUsage(context.getUsage() + " " + getSubcommandName() + " <id> <click type> <cooldown seconds> <delay ticks> <server>");
+        context.setUsage(context.getUsage() + " " + getSubcommandName() + " <id> <click type> <cooldown seconds> <delay ticks> <command>");
     }
 
     @Override

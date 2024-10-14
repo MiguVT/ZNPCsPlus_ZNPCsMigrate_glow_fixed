@@ -41,6 +41,18 @@ public class SQLite extends Database{
         connection = getSQLConnection();
     }
 
+    @Override
+    public void close() {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            logger.severe("An error occurred while closing the connection");
+            e.printStackTrace();
+        }
+    }
+
     public boolean tableExists(String tableName) {
         try {
             Statement s = connection.createStatement();

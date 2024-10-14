@@ -23,6 +23,7 @@ import lol.pyr.znpcsplus.commands.property.PropertyRemoveCommand;
 import lol.pyr.znpcsplus.commands.property.PropertySetCommand;
 import lol.pyr.znpcsplus.commands.storage.ImportCommand;
 import lol.pyr.znpcsplus.commands.storage.LoadAllCommand;
+import lol.pyr.znpcsplus.commands.storage.MigrateCommand;
 import lol.pyr.znpcsplus.commands.storage.SaveAllCommand;
 import lol.pyr.znpcsplus.config.ConfigManager;
 import lol.pyr.znpcsplus.conversion.DataImporterRegistry;
@@ -39,6 +40,7 @@ import lol.pyr.znpcsplus.scheduling.SpigotScheduler;
 import lol.pyr.znpcsplus.scheduling.TaskScheduler;
 import lol.pyr.znpcsplus.skin.cache.MojangSkinCache;
 import lol.pyr.znpcsplus.skin.cache.SkinCacheCleanTask;
+import lol.pyr.znpcsplus.storage.NpcStorageType;
 import lol.pyr.znpcsplus.tasks.HologramRefreshTask;
 import lol.pyr.znpcsplus.tasks.NpcProcessorTask;
 import lol.pyr.znpcsplus.tasks.ViewableHideOnLeaveListener;
@@ -127,7 +129,7 @@ public class ZNpcsPlus {
 
 
         PacketFactory packetFactory = setupPacketFactory(scheduler, propertyRegistry, configManager);
-        propertyRegistry.registerTypes(bootstrap, packetFactory, textSerializer);
+        propertyRegistry.registerTypes(bootstrap, packetFactory, textSerializer, scheduler);
 
         BungeeConnector bungeeConnector = new BungeeConnector(bootstrap);
         ActionRegistryImpl actionRegistry = new ActionRegistryImpl();
@@ -157,7 +159,7 @@ public class ZNpcsPlus {
         pluginManager.registerEvents(new UserListener(userManager), bootstrap);
 
         registerCommands(npcRegistry, skinCache, adventure, actionRegistry,
-                typeRegistry, propertyRegistry, importerRegistry, configManager);
+                typeRegistry, propertyRegistry, importerRegistry, configManager, packetFactory);
 
         log(ChatColor.WHITE + " * Starting tasks...");
         if (configManager.getConfig().checkForUpdates()) {
@@ -243,7 +245,7 @@ public class ZNpcsPlus {
     private void registerCommands(NpcRegistryImpl npcRegistry, MojangSkinCache skinCache, BukkitAudiences adventure,
                                   ActionRegistryImpl actionRegistry, NpcTypeRegistryImpl typeRegistry,
                                   EntityPropertyRegistryImpl propertyRegistry, DataImporterRegistry importerRegistry,
-                                  ConfigManager configManager) {
+                                  ConfigManager configManager, PacketFactory packetFactory) {
 
         Message<CommandContext> incorrectUsageMessage = context -> context.send(Component.text("Incorrect usage: /" + context.getUsage(), NamedTextColor.RED));
         CommandManager manager = new CommandManager(bootstrap, adventure, incorrectUsageMessage);
@@ -292,6 +294,7 @@ public class ZNpcsPlus {
         registerEnumParser(manager, Sound.class, incorrectUsageMessage);
         registerEnumParser(manager, ArmadilloState.class, incorrectUsageMessage);
         registerEnumParser(manager, WoldVariant.class, incorrectUsageMessage);
+        registerEnumParser(manager, NpcStorageType.class, incorrectUsageMessage);
 
         manager.registerCommand("npc", new MultiCommand(bootstrap.loadHelpMessage("root"))
                 .addSubcommand("center", new CenterCommand(npcRegistry))
@@ -316,7 +319,8 @@ public class ZNpcsPlus {
                 .addSubcommand("storage", new MultiCommand(bootstrap.loadHelpMessage("storage"))
                         .addSubcommand("save", new SaveAllCommand(npcRegistry))
                         .addSubcommand("reload", new LoadAllCommand(npcRegistry))
-                        .addSubcommand("import", new ImportCommand(npcRegistry, importerRegistry)))
+                        .addSubcommand("import", new ImportCommand(npcRegistry, importerRegistry))
+                        .addSubcommand("migrate", new MigrateCommand(configManager, this, packetFactory, actionRegistry, typeRegistry, propertyRegistry, textSerializer, npcRegistry.getStorage(), configManager.getConfig().storageType(), npcRegistry)))
                 .addSubcommand("holo", new MultiCommand(bootstrap.loadHelpMessage("holo"))
                         .addSubcommand("add", new HoloAddCommand(npcRegistry))
                         .addSubcommand("additem", new HoloAddItemCommand(npcRegistry))

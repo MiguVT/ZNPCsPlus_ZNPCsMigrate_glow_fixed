@@ -46,7 +46,8 @@ public class MySQLStorage implements NpcStorage {
         this.typeRegistry = typeRegistry;
         this.propertyRegistry = propertyRegistry;
         this.textSerializer = textSerializer;
-        this.database = new MySQL(configManager.getConfig().databaseConfig().createConnectionURL("mysql"), logger);
+        this.database = new MySQL(configManager.getConfig().databaseConfig().createConnectionURL("mysql"),
+                configManager.getConfig().databaseConfig().username(), configManager.getConfig().databaseConfig().password(), logger);
         database.load();
         if (database.getSQLConnection() == null) {
             throw new RuntimeException("Failed to initialize MySQL Storage");
@@ -312,5 +313,10 @@ public class MySQLStorage implements NpcStorage {
             logger.severe("Failed to delete npc with id " + entry.getId());
             exception.printStackTrace();
         }
+    }
+
+    @Override
+    public void close() {
+        database.close();
     }
 }

@@ -43,7 +43,6 @@ Open an issue in the GitHub [issue tracker](https://github.com/Pyrbu/ZNPCsPlus/i
 - [wiki.vg](https://wiki.vg/Main_Page) - Minecraft protocol documentation
 - [gson](https://github.com/google/gson) - JSON parsing library made by Google
 - [Mineskin.org](https://mineskin.org/) - Website for raw skin file uploads
-- [SpigotResourcesAPI](https://github.com/robertlit/SpigotResourcesAPI/) - Spigot API wrapper used for updater
 - [adventure](https://docs.advntr.dev/) - Minecraft text api
 - [DazzleConf](https://github.com/A248/DazzleConf) - Configuration library
 - [Director](https://github.com/Pyrbu/Director) - Command library

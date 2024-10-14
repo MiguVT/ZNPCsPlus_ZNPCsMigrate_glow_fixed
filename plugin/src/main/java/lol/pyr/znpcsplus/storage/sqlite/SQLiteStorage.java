@@ -312,4 +312,9 @@ public class SQLiteStorage implements NpcStorage {
             exception.printStackTrace();
         }
     }
+
+    @Override
+    public void close() {
+        database.close();
+    }
 }

@@ -30,9 +30,14 @@ public interface DatabaseConfig {
     @DefaultString("znpcsplus")
     String databaseName();
 
+    @ConfKey("use-ssl")
+    @ConfComments("Should SSL be used when connecting to the database?")
+    @DefaultBoolean(false)
+    boolean useSSL();
+
     default String createConnectionURL(String dbType) {
         if (dbType.equalsIgnoreCase("mysql")) {
-            return "jdbc:mysql://" + host() + ":" + port() + "/" + databaseName() + "?useSSL=false&user=" + username() + "&password=" + password();
+            return "jdbc:mysql://" + host() + ":" + port() + "/" + databaseName() + "?useSSL=" + useSSL();
         } else {
             throw new IllegalArgumentException("Unsupported database type: " + dbType);
         }

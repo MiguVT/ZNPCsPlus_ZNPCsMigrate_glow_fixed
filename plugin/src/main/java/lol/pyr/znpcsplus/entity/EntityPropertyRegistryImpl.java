@@ -20,6 +20,7 @@ import lol.pyr.znpcsplus.entity.properties.villager.VillagerProfessionProperty;
 import lol.pyr.znpcsplus.entity.properties.villager.VillagerTypeProperty;
 import lol.pyr.znpcsplus.entity.serializers.*;
 import lol.pyr.znpcsplus.packets.PacketFactory;
+import lol.pyr.znpcsplus.scheduling.TaskScheduler;
 import lol.pyr.znpcsplus.skin.cache.MojangSkinCache;
 import lol.pyr.znpcsplus.util.*;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -104,7 +105,7 @@ public class EntityPropertyRegistryImpl implements EntityPropertyRegistry {
          */
     }
 
-    public void registerTypes(ZNpcsPlusBootstrap plugin, PacketFactory packetFactory, LegacyComponentSerializer textSerializer) {
+    public void registerTypes(ZNpcsPlusBootstrap plugin, PacketFactory packetFactory, LegacyComponentSerializer textSerializer, TaskScheduler taskScheduler) {
         ServerVersion ver = PacketEvents.getAPI().getServerManager().getVersion();
         boolean legacyBooleans = ver.isOlderThan(ServerVersion.V_1_9);
         boolean legacyNames = ver.isOlderThan(ServerVersion.V_1_9);
@@ -127,7 +128,7 @@ public class EntityPropertyRegistryImpl implements EntityPropertyRegistry {
 
         register(new DummyProperty<>("permission_required", false));
 
-        register(new ForceBodyRotationProperty(plugin));
+        register(new ForceBodyRotationProperty(plugin, taskScheduler));
 
         register(new DummyProperty<>("player_knockback", false));
         register(new DummyProperty<>("player_knockback_exempt_permission", String.class));

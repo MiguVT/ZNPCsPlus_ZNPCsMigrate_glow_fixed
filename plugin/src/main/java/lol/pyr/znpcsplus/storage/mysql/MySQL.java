@@ -10,10 +10,14 @@ import java.util.logging.Logger;
 
 public class MySQL extends Database {
     private final String connectionURL;
+    private final String username;
+    private final String password;
 
-    public MySQL(String connectionURL, Logger logger) {
+    public MySQL(String connectionURL, String username, String password, Logger logger) {
         super(logger);
         this.connectionURL = connectionURL;
+        this.username = username;
+        this.password = password;
     }
 
     @Override
@@ -25,7 +29,7 @@ public class MySQL extends Database {
                 return connection;
             }
             Class.forName("com.mysql.jdbc.Driver");
-            connection = java.sql.DriverManager.getConnection(connectionURL);
+            connection = java.sql.DriverManager.getConnection(connectionURL, username, password);
             return connection;
         } catch (ClassNotFoundException ex) {
             logger.severe("MySQL JDBC library not found" + ex);
@@ -54,6 +58,18 @@ public class MySQL extends Database {
     @Override
     public void load() {
         connection = getSQLConnection();
+    }
+
+    @Override
+    public void close() {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            logger.severe("An error occurred while closing the connection");
+            e.printStackTrace();
+        }
     }
 
     public boolean tableExists(String tableName) {

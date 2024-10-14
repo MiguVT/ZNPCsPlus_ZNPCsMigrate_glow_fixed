@@ -1,19 +1,20 @@
 package lol.pyr.znpcsplus.updater;
 
-import me.robertlit.spigotresources.api.Resource;
-import me.robertlit.spigotresources.api.SpigotResourcesAPI;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.logging.Logger;
 
 public class UpdateChecker extends BukkitRunnable {
     private final static Logger logger = Logger.getLogger("ZNPCsPlus Update Checker");
-    private final static int RESOURCE_ID = 109380;
+    private final static String GET_RESOURCE = "https://api.spigotmc.org/simple/0.2/index.php?action=getResource&id=109380";
     public final static String DOWNLOAD_LINK = "https://www.spigotmc.org/resources/znpcsplus.109380/";
-
-    private final SpigotResourcesAPI api = new SpigotResourcesAPI(1, TimeUnit.MINUTES);
 
     private final PluginDescriptionFile info;
     private Status status = Status.UNKNOWN;
@@ -24,9 +25,29 @@ public class UpdateChecker extends BukkitRunnable {
     }
 
     public void run() {
-        Resource resource = api.getResource(RESOURCE_ID).join();
-        if (resource == null) return;
-        newestVersion = resource.getVersion();
+        String foundVersion = null;
+        try {
+            URL getResource = new URL(GET_RESOURCE);
+            HttpURLConnection httpRequest = ((HttpURLConnection) getResource.openConnection());
+            httpRequest.setRequestMethod("GET");
+            httpRequest.setConnectTimeout(5_000);
+            httpRequest.setReadTimeout(5_000);
+
+            if (httpRequest.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                try (InputStreamReader reader = new InputStreamReader(httpRequest.getInputStream())) {
+                    JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+                    foundVersion = jsonObject.get("current_version").getAsString();
+                }
+            } else {
+                logger.warning("Failed to check for updates: HTTP response code " + httpRequest.getResponseCode());
+            }
+        } catch (IOException e) {
+            logger.warning("Failed to check for updates: " + e.getMessage());
+            return;
+        }
+
+        if (foundVersion == null) return;
+        newestVersion = foundVersion;
 
         status = compareVersions(info.getVersion(), newestVersion);
         if (status == Status.UPDATE_NEEDED) notifyConsole();

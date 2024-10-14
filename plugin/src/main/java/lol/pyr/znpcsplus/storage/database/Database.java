@@ -13,4 +13,6 @@ public abstract class Database {
     public abstract Connection getSQLConnection();
 
     public abstract void load();
+
+    public abstract void close();
 }
